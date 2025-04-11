@@ -26,7 +26,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://advancedtodo-server.onrender.com"],
+    origin: ["https://advancedtodo-server.onrender.com/"],
   },
 });
 
