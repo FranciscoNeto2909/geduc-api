@@ -11,7 +11,7 @@ module.exports = {
             return res.status(400).json("Erro: login to access this page")
         }
         try {
-            const decode = await promisify(jwt.verify)(token, process.env.TOKKEN);
+            const decode = await promisify(jwt.verify)(token, "a92nfj40d92ny645lf2s03md9n2g");
             req.userId = decode.id;
             return next()
         } catch (error) {

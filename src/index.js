@@ -8,7 +8,7 @@ const path = require("path");
 const app = express();
 const http = require("http");
 const { Server } = require("socket.io");
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 
 sequelize.sync().then(() => console.log("Database conected successfully..."));
 app.use(express.json());
