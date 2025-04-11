@@ -8,7 +8,7 @@ const path = require("path");
 const app = express();
 const http = require("http");
 const { Server } = require("socket.io");
-const port = process.env.PORT || 3001;
+const port = process.env.PORT;
 
 sequelize.sync().then(() => console.log("Database conected successfully..."));
 app.use(express.json());
@@ -26,7 +26,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "http://10.0.0.108:5173/"],
   },
 });
 
