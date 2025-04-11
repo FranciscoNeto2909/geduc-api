@@ -5,7 +5,11 @@ module.exports = {
     async all(req, res) {
         try {
             const tasks = await Task.findAll()
-            res.status(200).json(tasks)
+            if (tasks.length > 0) {
+                res.status(200).json(tasks)
+            } else{
+                res.status(200).json([])
+            }
         } catch (error) {
             res.status(400).send(error)
         }
