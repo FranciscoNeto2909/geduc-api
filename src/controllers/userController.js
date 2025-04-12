@@ -23,7 +23,7 @@ module.exports = {
       const user = await User.findOne({ where: { id } });
 
       if (!user) {
-        return res.status(400).json("Erro: user not found!");
+        return res.status(400).json("Erro: Usuário não encontrado!");
       }
       res.status(200).json(user);
     } catch (error) {
@@ -34,7 +34,7 @@ module.exports = {
   async logedUsers(req, res) {
     try {
       return res.status(200).json({
-        msg: "List users",
+        msg: "Lista de usuários",
         id_user_loged: req.userId,
       });
     } catch (error) {
@@ -51,11 +51,11 @@ module.exports = {
       if (userExist) {
         return res
           .status(400)
-          .json("Erro: user alredy existe, please choice another email!");
+          .json("Erro: Usuário já existe, use outro email!");
       }
 
       await User.create(dados);
-      return res.status(200).json("Registered user successfully!");
+      return res.status(200).json("Usuário criado com sucesso!");
     } catch (error) {
       return res.status(400).send(error);
     }
@@ -68,7 +68,7 @@ module.exports = {
       const user = await User.findOne({ where: { id } });
 
       if (!user) {
-        return res.status(400).json("Erro: user not found!");
+        return res.status(400).json("Erro: usuário não encontrado!");
       }
 
       name != "" ? (user.name = name) : "";
@@ -78,20 +78,20 @@ module.exports = {
       if (await compare(newPassword, user.password)) {
         return res.status(400).json({
           error: true,
-          msg: "Same password!",
+          msg: "As senhas são iguais!",
         });
       } else if (newPassword != "" && newPassword.length > 6) {
         user.password = newPassword;
         await user.save();
         return res.status(201).json({
-          msg: "Password changed with success!",
+          msg: "Senha atualizada!",
           error: false,
         });
       }
       await user.save();
 
       res.status(201).json({
-        msg: "User updated!",
+        msg: "Dados atualizados!",
         error: false,
       });
     } catch (error) {
@@ -105,7 +105,7 @@ module.exports = {
       const user = await User.findOne({ where: { id } });
 
       if (!user) {
-        return res.status(400).json("Erro: user not found!");
+        return res.status(400).json("Erro: usuário não encontrado!");
       }
       if (user.image != "" && user.image != null) {
         try {
@@ -125,12 +125,12 @@ module.exports = {
 
           return res.status(200).json({
             error: false,
-            msg: "Uploaded with success!",
+            msg: "foto enviada!",
           });
         } catch (error) {
           return res.status(400).json({
             error: true,
-            msg: "Upload error!",
+            msg: "Foto não enviada!",
           });
         }
       }
@@ -147,13 +147,13 @@ module.exports = {
     if (user === null) {
       return res.status(400).json({
         error: true,
-        msg: "Incorrect email or password!",
+        msg: "Email ou senha incorretos!",
       });
     }
     if (!(await compare(password, user.password))) {
       return res.status(400).json({
         error: true,
-        msg: "Incorrect email or password!",
+        msg: "Email ou senha incorretos!",
       });
     } else {
       const token = jwt.sign({ id: user.id }, "a92nfj40d92ny645lf2s03md9n2g", {
@@ -165,7 +165,7 @@ module.exports = {
 
       return res.status(200).json({
         error: false,
-        msg: "User login successfully!",
+        msg: "Usuário conectado!",
         token: token,
         userId: user.id,
       });
@@ -179,7 +179,7 @@ module.exports = {
       if (user === null) {
         return res.status(400).json({
           error: true,
-          msg: "user not found!",
+          msg: "Usuário não encontrado!",
         });
       }
 
@@ -188,7 +188,7 @@ module.exports = {
 
       return res.status(200).json({
         error: false,
-        msg: "User disconnected!",
+        msg: "Usuário desconectado!",
       });
     } catch (error) {
       return error;
@@ -200,7 +200,7 @@ module.exports = {
       const user = await User.findOne({ where: { id } });
 
       if (!user) {
-        return res.status(400).json("Erro: user not found!");
+        return res.status(400).json("Erro: usuário não encontrado!");
       } else {
         if (user.image) {
           fs.unlink(`./src/images/profile/${user.image}`, error => {
@@ -209,9 +209,8 @@ module.exports = {
             }
           });
         }
-
         await user.destroy();
-        res.status(201).json("User removed!");
+        res.status(201).json("usuário removido!");
       }
     } catch (error) {
       res.status(400).send(error);

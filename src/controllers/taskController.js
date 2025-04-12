@@ -19,7 +19,7 @@ module.exports = {
             const id = req.params.id
             const task = await Task.findOne({ where: { id } })
             if (!task) {
-                return res.status(400).json("Task not found!")
+                return res.status(400).json("Tarefa não encontrada!")
             }
             res.status(200).json(task)
         } catch (error) {
@@ -34,19 +34,22 @@ module.exports = {
             const task = await Task.findOne({ where: { title } })
 
             if (task) {
-                return res.status(400).json("Erro: tasks alredy exist!")
+                return res.status(400).json("Erro: tarefa ja existe!")
             } else {
                 await Task.create(data)
                 const newTask = await Task.findOne({ where: { title } })
 
                 res.status(201).json({
                     erro: false,
-                    msg: "Task registered successfully!",
+                    msg: "Tarefa adicionada com sucesso!",
                     id: newTask.id
                 })
             }
         } catch (error) {
-            res.status(400).json("faltam dados" + error)
+            res.status(400).json({
+                msg:"faltam dados",
+                erro: error
+            })
         }
     },
 
@@ -56,7 +59,7 @@ module.exports = {
 
             const task = await Task.findOne({ where: { id } })
             if (!task) {
-                return res.status(400).json("Task not found!")
+                return res.status(400).json("Tarefa não encontrada!")
             }
             else {
                 task.title = req.body.title
@@ -67,7 +70,7 @@ module.exports = {
 
                 return res.status(201).json({
                     erro: false,
-                    msg: "Task updated!"
+                    msg: "Tarefa atualizada!"
                 })
             }
         } catch (error) {
@@ -80,7 +83,7 @@ module.exports = {
             const task = await Task.findOne({ where: { id } })
 
             if (!task) {
-                return res.status(400).json("Task not found!")
+                return res.status(400).json("Tarefa não encontrada!")
             }
 
             await task.destroy()
@@ -88,7 +91,7 @@ module.exports = {
 
             return res.status(201).json({
                 erro: false,
-                msg: "Task removed!"
+                msg: "Tarefa apagada!"
             })
 
         } catch (error) {

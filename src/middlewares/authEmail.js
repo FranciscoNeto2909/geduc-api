@@ -23,9 +23,9 @@ module.exports = {
                 subject:"Codigo:",
                 text:code,
             })
-                .then(msg => console.log("Sms sended with success!"))
+                .then(msg => console.log("Email enviado!"))
                 .catch(err => console.log("erro:" + err))
-            return res.status(200).json("Sms sended with success!")
+            return res.status(200).json("Email enviado!")
         } catch (error) {
             return res.status(400).json(error)
         }
