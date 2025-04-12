@@ -7,7 +7,11 @@ module.exports = {
   async all(req, res) {
     try {
       const users = await User.findAll();
-      res.status(200).json(users);
+      if (users.length > 0) {
+        res.status(200).json(users);
+      } else {
+        res.status(200).json([]);
+      }
     } catch (error) {
       res.status(400).send(error);
     }

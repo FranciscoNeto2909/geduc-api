@@ -6,7 +6,7 @@ const upload = require("../configs/multer");
 
 router
 .route("/")
-.get(isLogged, userController.all)
+.get(userController.all)
 .post(userController.create);
 
 router
