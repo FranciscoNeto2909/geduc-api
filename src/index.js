@@ -24,6 +24,7 @@ app.listen(port, console.log("executando..."));
 
 const server = http.createServer(app);
 
+
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:5173", "https://advancedtodo-server.onrender.com"],
@@ -32,12 +33,12 @@ const io = new Server(server, {
 
 io.on("connection", socket => {
   console.log(`user connected ${socket.id}`);
-
+  
   socket.on("set_username", username => {
     socket.data.username = username;
     console.log(socket.data.username);
   });
-
+  
   socket.on("message", text => {
     io.emit("receive_message", {
       text,
@@ -45,4 +46,8 @@ io.on("connection", socket => {
       author: socket.data.username,
     });
   });
+});
+
+server.listen(process.env.PORT, () => {
+  console.log("Servidor rodando");
 });
