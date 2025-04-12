@@ -20,10 +20,8 @@ app.use(
 app.use("/users", userRoutes);
 app.use("/tasks", tasksRoutes);
 app.use("/emailAuth", emailAuthRoutes);
-app.listen(port, console.log("executando..."));
 
 const server = http.createServer(app);
-
 
 const io = new Server(server, {
   cors: {
