@@ -8,6 +8,7 @@ const path = require("path");
 const app = express();
 const http = require("http");
 const { Server } = require("socket.io");
+const { isLogged } = require("./middlewares/auth");
 const port = process.env.PORT;
 
 sequelize.sync().then(() => console.log("Database conected successfully..."));
@@ -25,7 +26,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "https://advancedtodo-server.onrender.com"],
+    origin: ["http://localhost:5173","http://10.0.0.111:5173", "https://advancedtodo-server.onrender.com"],
   },
 });
 
@@ -38,6 +39,7 @@ io.on("connection", socket => {
   });
   
   socket.on("message", text => {
+    isLogged &&
     io.emit("receive_message", {
       text,
       authorId: socket.id,
