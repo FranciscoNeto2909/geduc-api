@@ -39,7 +39,6 @@ io.on("connection", socket => {
   });
   
   socket.on("message", text => {
-    isLogged &&
     io.emit("receive_message", {
       text,
       authorId: socket.id,
@@ -51,3 +50,4 @@ io.on("connection", socket => {
 server.listen(process.env.PORT, () => {
   console.log("Servidor rodando");
 });
+""
