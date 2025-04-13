@@ -45,7 +45,24 @@ io.on("connection", socket => {
       author: socket.data.username,
     });
   });
+
+  socket.on("login", text => {
+    io.emit("receive_message", {
+      text,
+      authorId: socket.id,
+      author: socket.data.username,
+    });
+  });
+
+  socket.on("task", text => {
+    io.emit("receive_message", {
+      text,
+      authorId: socket.id,
+      author: socket.data.username,
+    });
+  });
 });
+
 
 server.listen(process.env.PORT, () => {
   console.log("Servidor rodando");
