@@ -18,7 +18,7 @@ module.exports = {
 
         try {
             transporter.sendMail({
-                from: "TaskApp <burdette.kutch68@ethereal.email>",
+                from: "TaskApp <mybnbapp@gmail.com>",
                 to:email,
                 subject:"Codigo:",
                 text:code,
