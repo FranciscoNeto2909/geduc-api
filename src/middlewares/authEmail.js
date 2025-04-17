@@ -15,7 +15,6 @@ module.exports = {
   async authEmail(req, res) {
     const email = req.body.email;
     const code = req.body.code;
-    console.log(email)
 
     try {
       transporter
@@ -25,7 +24,7 @@ module.exports = {
           subject: "Codigo:",
           text: code,
         })
-        .then(msg => console.log(msg))
+        .then(msg => console.log("Mensagem enviada"))
         .catch(err => console.log("erro:" + err));
       return res.status(200).json("Email enviado!");
     } catch (error) {
