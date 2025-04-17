@@ -3,5 +3,5 @@ module.exports = {
     port:465,
     secure:true,
     user:"mybnbapp@gmail.com",
-    pass:"xqrj kwpp xkin rtug"
+    pass:"xqrjkwppxkinrtug"
 }
