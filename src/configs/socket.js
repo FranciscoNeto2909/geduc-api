@@ -1,5 +1,15 @@
+const socket_types = {
+  message: "message",
+  user: "set_username",
+  login: "login",
+  editedTask: "editedTask",
+  createdTask: "createdTask",
+  deletedTask: "deletedTask",
+  completedTask: "completedTask",
+};
+
 function socketConections({ socket, io }) {
-  socket.on("message", text => {
+  socket.on(socket_types.message, text => {
     io.emit("receive_message", {
       text,
       authorId: socket.id,
@@ -7,7 +17,7 @@ function socketConections({ socket, io }) {
     });
   });
 
-  socket.on("login", text => {
+  socket.on(socket_types.login, text => {
     io.emit("receive_message", {
       text,
       authorId: socket.id,
@@ -15,7 +25,7 @@ function socketConections({ socket, io }) {
     });
   });
 
-  socket.on("task", text => {
+  socket.on(socket_types.editedTask, text => {
     io.emit("receive_message", {
       text,
       authorId: socket.id,
@@ -23,7 +33,7 @@ function socketConections({ socket, io }) {
     });
   });
 
-  socket.on("createdTask", text => {
+  socket.on(socket_types.createdTask, text => {
     io.emit("receive_message", {
       text,
       authorId: socket.id,
@@ -31,7 +41,7 @@ function socketConections({ socket, io }) {
     });
   });
 
-  socket.on("completedTask", text => {
+  socket.on(socket_types.completedTask, text => {
     io.emit("receive_message", {
       text,
       authorId: socket.id,
@@ -39,7 +49,7 @@ function socketConections({ socket, io }) {
     });
   });
 
-  socket.on("removedTask", text => {
+  socket.on(socket_types.deletedTask, text => {
     io.emit("receive_message", {
       text,
       authorId: socket.id,
