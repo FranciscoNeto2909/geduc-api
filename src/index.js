@@ -9,6 +9,7 @@ const app = express();
 const http = require("http");
 const { Server } = require("socket.io");
 const { isLogged } = require("./middlewares/auth");
+const socketConections = require("./configs/socket");
 const port = process.env.PORT;
 
 sequelize.sync().then(() => console.log("Database conected successfully..."));
@@ -31,38 +32,8 @@ const io = new Server(server, {
 });
 
 io.on("connection", socket => {
-  console.log(`user connected ${socket.id}`);
-  
-  socket.on("set_username", username => {
-    socket.data.username = username;
-    console.log(socket.data.username);
-  });
-  
-  socket.on("message", text => {
-    io.emit("receive_message", {
-      text,
-      authorId: socket.id,
-      author: socket.data.username,
-    });
-  });
-
-  socket.on("login", text => {
-    io.emit("receive_message", {
-      text,
-      authorId: socket.id,
-      author: socket.data.username,
-    });
-  });
-
-  socket.on("task", text => {
-    io.emit("receive_message", {
-      text,
-      authorId: socket.id,
-      author: socket.data.username,
-    });
-  });
+  socketConections({socket, io})
 });
-
 
 server.listen(process.env.PORT, () => {
   console.log("Servidor rodando");
