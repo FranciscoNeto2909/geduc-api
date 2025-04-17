@@ -61,30 +61,6 @@ io.on("connection", socket => {
       author: socket.data.username,
     });
   });
-
-  socket.on("completedTask", text => {
-    io.emit("receive_message", {
-      text,
-      authorId: socket.id,
-      author: socket.data.username,
-    });
-  });
-
-  socket.on("deletedTask", text => {
-    io.emit("receive_message", {
-      text,
-      authorId: socket.id,
-      author: socket.data.username,
-    });
-  });
-
-  socket.on("createdTask", text => {
-    io.emit("receive_message", {
-      text,
-      authorId: socket.id,
-      author: socket.data.username,
-    });
-  });
 });
 
 
