@@ -2,8 +2,8 @@ const cors = require("cors");
 const express = require("express");
 const sequelize = require("./configs/db");
 const userRoutes = require("./routes/users.routes");
-const tasksRoutes = require("./routes/tasks.routes");
-const emailAuthRoutes = require("./routes/emailAuth.routes");
+const blogRoutes = require("./routes/blog.routes");
+const emailAuthRoutes = require("./routes/email-auth.routes");
 const path = require("path");
 const app = express();
 const http = require("http");
@@ -20,7 +20,7 @@ app.use(
   express.static(path.resolve(__dirname, "images", "profile"))
 );
 app.use("/users", userRoutes);
-app.use("/tasks", tasksRoutes);
+app.use("/tasks", blogRoutes);
 app.use("/emailAuth", emailAuthRoutes);
 
 const server = http.createServer(app);

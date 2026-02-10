@@ -1,4 +1,4 @@
-const Task = require("../models/task")
+const Task = require("../models/blog")
 const fs = require("fs")
 
 module.exports = {

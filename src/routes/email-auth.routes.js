@@ -1,5 +1,5 @@
 const express = require("express")
-const { authEmail } = require("../middlewares/authEmail")
+const { authEmail } = require("../middlewares/auth-email")
 const router = express.Router()
 
 router.route("/")
