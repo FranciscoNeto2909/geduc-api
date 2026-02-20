@@ -47,13 +47,11 @@ module.exports = {
       const dados = req.body;
       const email = req.body.email;
       const userExist = await User.findOne({ where: { email } });
-
       if (userExist) {
         return res
           .status(400)
           .json("Erro: Usuário já existe, use outro email!");
       }
-
       await User.create(dados);
       return res.status(200).json("Usuário criado com sucesso!");
     } catch (error) {
@@ -63,7 +61,7 @@ module.exports = {
 
   async update(req, res) {
     try {
-      const { name, email, newPassword, image } = req.body;
+      const { name, lastName, email, newPassword, image } = req.body;
       const id = req.params.id;
       const user = await User.findOne({ where: { id } });
 
@@ -72,15 +70,16 @@ module.exports = {
       }
 
       name != "" ? (user.name = name) : "";
+      lastName != "" ? (user.lastName = lastName) : "";
       image != "" ? (user.image = image) : "";
       email != "" ? (user.email = email) : "";
 
-      if (await compare(newPassword, user.password)) {
+      if (newPassword && (await compare(newPassword, user.password))) {
         return res.status(400).json({
           error: true,
           msg: "As senhas são iguais!",
         });
-      } else if (newPassword != "" && newPassword.length > 6) {
+      } else if (newPassword && newPassword != "" && newPassword.length > 6) {
         user.password = newPassword;
         await user.save();
         return res.status(201).json({
@@ -95,6 +94,7 @@ module.exports = {
         error: false,
       });
     } catch (error) {
+      console.log(error);
       res.status(400).send(error);
     }
   },
@@ -143,14 +143,14 @@ module.exports = {
     const { email, password } = req.body;
 
     const user = await User.findOne({ where: { email } });
-
     if (user === null) {
       return res.status(400).json({
         error: true,
-        msg: "Email ou senha incorretos!",
+        msg: "Usuario não encontrado!",
       });
     }
     if (!(await compare(password, user.password))) {
+      console.log(user.password);
       return res.status(400).json({
         error: true,
         msg: "Email ou senha incorretos!",
@@ -165,9 +165,10 @@ module.exports = {
 
       return res.status(200).json({
         error: false,
-        msg: "Usuário conectado!",
+        msg: "Seja bem-vindo!",
         token: token,
         userId: user.id,
+        user: user,
       });
     }
   },
@@ -188,7 +189,7 @@ module.exports = {
 
       return res.status(200).json({
         error: false,
-        msg: "Usuário desconectado!",
+        msg: "Até a proxima!",
       });
     } catch (error) {
       return error;

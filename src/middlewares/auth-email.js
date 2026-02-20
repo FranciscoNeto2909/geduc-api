@@ -13,22 +13,20 @@ const transporter = nodeMailer.createTransport({
 
 module.exports = {
   async authEmail(req, res) {
-    const email = req.body.email;
-    const code = req.body.code;
+    const { email, code } = req.body;
 
     try {
-      transporter
-        .sendMail({
-          from: "TaskApp <mybnbapp@gmail.com>",
-          to: email,
-          subject: "Codigo:",
-          text: code,
-        })
-        .then(msg => console.log("Mensagem enviada"))
-        .catch(err => console.log("erro:" + err));
-      return res.status(200).json("Email enviado!");
+      await transporter.sendMail({
+        from: smtpConfig.from,
+        to: email,
+        subject: "Código de verificação",
+        text: `Seu código de verificação é: ${code}`,
+      });
+
+      return res.status(200).json({ message: "Email enviado!" });
     } catch (error) {
-      return res.status(400).json(error);
+      console.error("Erro ao enviar email:", error);
+      return res.status(500).json({ error: "Falha ao enviar email" });
     }
   },
 };

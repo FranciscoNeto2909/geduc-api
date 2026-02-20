@@ -35,6 +35,6 @@ io.on("connection", socket => {
   socketConections({socket, io})
 });
 
-server.listen(process.env.PORT, () => {
+server.listen(3001, () => {
   console.log("Servidor rodando");
 });
