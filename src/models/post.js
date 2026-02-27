@@ -1,12 +1,16 @@
 const Sequelize = require("sequelize");
 const database = require("../configs/db");
 
-const Blog = database.define("Blog", {
+const Post = database.define("Post", {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
+  },
+  image: {
+    type: Sequelize.STRING,
+    allowNull:true,
   },
   title: {
     type: Sequelize.STRING(50),
@@ -17,8 +21,8 @@ const Blog = database.define("Blog", {
       },
     },
   },
-  Text1: {
-    type: Sequelize.STRING(100),
+  subtitle: {
+    type: Sequelize.STRING(50),
     allowNull: false,
     validate: {
       notEmpty: {
@@ -26,8 +30,8 @@ const Blog = database.define("Blog", {
       },
     },
   },
-  Text2: {
-    type: Sequelize.STRING(100),
+  text: {
+    type: Sequelize.STRING,
     allowNull: false,
     validate: {
       notEmpty: {
@@ -37,4 +41,4 @@ const Blog = database.define("Blog", {
   },
 });
 
-module.exports = Blog;
+module.exports = Post;

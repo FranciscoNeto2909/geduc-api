@@ -2,6 +2,7 @@ const { compare } = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+const { env } = require("process");
 
 module.exports = {
   async all(req, res) {
@@ -156,7 +157,7 @@ module.exports = {
         msg: "Email ou senha incorretos!",
       });
     } else {
-      const token = jwt.sign({ id: user.id }, "a92nfj40d92ny645lf2s03md9n2g", {
+      const token = jwt.sign({ id: user.id }, process.env.TOKEN, {
         expiresIn: "1d",
       });
 

@@ -1,8 +1,9 @@
+require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const sequelize = require("./configs/db");
 const userRoutes = require("./routes/users.routes");
-const blogRoutes = require("./routes/blog.routes");
+const postRoutes = require("./routes/post.routes");
 const emailAuthRoutes = require("./routes/email-auth.routes");
 const path = require("path");
 const app = express();
@@ -19,8 +20,9 @@ app.use(
   "/profile",
   express.static(path.resolve(__dirname, "images", "profile")),
 );
+app.use("/posts", express.static(path.resolve(__dirname, "images", "posts")));
 app.use("/users", userRoutes);
-app.use("/tasks", blogRoutes);
+app.use("/posts", postRoutes);
 app.use("/emailAuth", emailAuthRoutes);
 
 const server = http.createServer(app);

@@ -29,6 +29,7 @@ const User = database.define("user", {
   },
   image: {
     type: Sequelize.STRING,
+    allowNull:true
   },
   phone: {
     type: Sequelize.STRING,
