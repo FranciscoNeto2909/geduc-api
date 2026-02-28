@@ -4,12 +4,12 @@ const express = require("express");
 const sequelize = require("./configs/db");
 const userRoutes = require("./routes/users.routes");
 const postRoutes = require("./routes/post.routes");
+const geducRoutes = require("./routes/geduc.routes");
 const emailAuthRoutes = require("./routes/email-auth.routes");
 const path = require("path");
 const app = express();
 const http = require("http");
 const { Server } = require("socket.io");
-const { isLogged } = require("./middlewares/auth");
 const socketConections = require("./configs/socket");
 const port = process.env.PORT;
 
@@ -23,6 +23,7 @@ app.use(
 app.use("/posts", express.static(path.resolve(__dirname, "images", "posts")));
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/geduc", geducRoutes);
 app.use("/emailAuth", emailAuthRoutes);
 
 const server = http.createServer(app);

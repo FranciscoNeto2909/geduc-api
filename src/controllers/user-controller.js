@@ -62,7 +62,7 @@ module.exports = {
 
   async update(req, res) {
     try {
-      const { name, lastName, email, newPassword, image } = req.body;
+      const { name, lastName, email, newPassword, image, phone } = req.body;
       const id = req.params.id;
       const user = await User.findOne({ where: { id } });
 
@@ -74,6 +74,7 @@ module.exports = {
       lastName != "" ? (user.lastName = lastName) : "";
       image != "" ? (user.image = image) : "";
       email != "" ? (user.email = email) : "";
+      phone != "" ? (user.phone = phone) : "";
 
       if (newPassword && (await compare(newPassword, user.password))) {
         return res.status(400).json({
