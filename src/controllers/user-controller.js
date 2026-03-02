@@ -143,7 +143,7 @@ module.exports = {
 
   async login(req, res) {
     const { email, password } = req.body;
-
+    console.log(req.body)
     const user = await User.findOne({ where: { email } });
     if (user === null) {
       return res.status(400).json({
