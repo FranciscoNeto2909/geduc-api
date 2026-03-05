@@ -1,5 +1,5 @@
 const { compare } = require("bcryptjs");
-const User = require("../models/user");
+const userDb = require("../db/user-db");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const { env } = require("process");
@@ -7,7 +7,7 @@ const { env } = require("process");
 module.exports = {
   async all(req, res) {
     try {
-      const users = await User.findAll();
+      const users = await userDb.findAll();
       if (users.length > 0) {
         res.status(200).json(users);
       } else {
@@ -21,7 +21,7 @@ module.exports = {
   async one(req, res) {
     try {
       const id = req.params.id;
-      const user = await User.findOne({ where: { id } });
+      const user = await userDb.findOneById(id);
 
       if (!user) {
         return res.status(400).json("Erro: Usuário não encontrado!");
@@ -47,13 +47,13 @@ module.exports = {
     try {
       const dados = req.body;
       const email = req.body.email;
-      const userExist = await User.findOne({ where: { email } });
+      const userExist = await userDb.findOneByEmail(email);
       if (userExist) {
         return res
           .status(400)
           .json("Erro: Usuário já existe, use outro email!");
       }
-      await User.create(dados);
+      await userDb.create(dados);
       return res.status(200).json("Usuário criado com sucesso!");
     } catch (error) {
       return res.status(400).send(error);
@@ -64,17 +64,18 @@ module.exports = {
     try {
       const { name, lastName, email, newPassword, image, phone } = req.body;
       const id = req.params.id;
-      const user = await User.findOne({ where: { id } });
+      const user = await userDb.findOneById(id);
 
       if (!user) {
         return res.status(400).json("Erro: usuário não encontrado!");
       }
 
-      name != "" ? (user.name = name) : "";
-      lastName != "" ? (user.lastName = lastName) : "";
-      image != "" ? (user.image = image) : "";
-      email != "" ? (user.email = email) : "";
-      phone != "" ? (user.phone = phone) : "";
+      const updateData = {};
+      if (name != "") updateData.name = name;
+      if (lastName != "") updateData.lastName = lastName;
+      if (image != "") updateData.image = image;
+      if (email != "") updateData.email = email;
+      if (phone != "") updateData.phone = phone;
 
       if (newPassword && (await compare(newPassword, user.password))) {
         return res.status(400).json({
@@ -82,14 +83,14 @@ module.exports = {
           msg: "As senhas são iguais!",
         });
       } else if (newPassword && newPassword != "" && newPassword.length > 6) {
-        user.password = newPassword;
-        await user.save();
+        updateData.password = newPassword;
+        await userDb.update(id, updateData);
         return res.status(201).json({
           msg: "Senha atualizada!",
           error: false,
         });
       }
-      await user.save();
+      await userDb.update(id, updateData);
 
       res.status(201).json({
         msg: "Dados atualizados!",
@@ -104,7 +105,7 @@ module.exports = {
   async updateImage(req, res) {
     try {
       const id = req.params.id;
-      const user = await User.findOne({ where: { id } });
+      const user = await userDb.findOneById(id);
 
       if (!user) {
         return res.status(400).json("Erro: usuário não encontrado!");
@@ -122,8 +123,7 @@ module.exports = {
       }
       if (req.file) {
         try {
-          user.image = req.file.filename;
-          await user.save();
+          await userDb.update(id, { image: req.file.filename });
 
           return res.status(200).json({
             error: false,
@@ -144,7 +144,7 @@ module.exports = {
   async login(req, res) {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email } });
+    const user = await userDb.findOneByEmail(email);
     if (user === null) {
       return res.status(400).json({
         error: true,
@@ -162,22 +162,22 @@ module.exports = {
         expiresIn: "1d",
       });
 
-      user.isLogged = true;
-      await user.save();
+      await userDb.updateField(user.id, "isLogged", true);
+      const updatedUser = await userDb.findOneById(user.id);
 
       return res.status(200).json({
         error: false,
         msg: "Seja bem-vindo!",
         token: token,
-        userId: user.id,
-        user: user,
+        userId: updatedUser.id,
+        user: updatedUser,
       });
     }
   },
   async logout(req, res) {
     try {
       const id = req.params.id;
-      const user = await User.findOne({ where: { id } });
+      const user = await userDb.findOneById(id);
 
       if (user === null) {
         return res.status(400).json({
@@ -186,8 +186,7 @@ module.exports = {
         });
       }
 
-      user.isLogged = false;
-      await user.save();
+      await userDb.updateField(id, "isLogged", false);
 
       return res.status(200).json({
         error: false,
@@ -200,7 +199,7 @@ module.exports = {
   async delete(req, res) {
     try {
       const id = req.params.id;
-      const user = await User.findOne({ where: { id } });
+      const user = await userDb.findOneById(id);
 
       if (!user) {
         return res.status(400).json("Erro: usuário não encontrado!");
@@ -212,7 +211,7 @@ module.exports = {
             }
           });
         }
-        await user.destroy();
+        await userDb.delete(id);
         res.status(201).json("usuário removido!");
       }
     } catch (error) {
