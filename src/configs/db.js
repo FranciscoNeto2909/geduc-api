@@ -1,11 +1,8 @@
-const Sequelize = require("sequelize")
+const Sequelize = require("sequelize");
 
-const sequelize = new Sequelize("mybnb", "shark", "sh4rk", {
-    dialect: "sqlite",
-
-
-    
-    host: "./dev.sqlite"
-})
+const sequelize = new Sequelize("geduc", "shark", "sh4rk", {
+  dialect: "sqlite",
+  host: "./dev.sqlite",
+});
 
 module.exports = sequelize;
