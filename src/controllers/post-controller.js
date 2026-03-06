@@ -1,5 +1,5 @@
-const Post = require("../models/post");
-const User = require("../models/user");
+const postDb = require("../db/post-db");
+const userDb = require("../db/user-db");
 
 const fs = require("fs");
 const path = require("path");
@@ -7,7 +7,7 @@ const path = require("path");
 module.exports = {
   async all(req, res) {
     try {
-      const posts = await Post.findAll();
+      const posts = await postDb.findAll();
       res.status(200).json(posts);
     } catch (error) {
       res.status(400).send(error);
@@ -16,7 +16,7 @@ module.exports = {
   async one(req, res) {
     try {
       const id = req.params.id;
-      const post = await Post.findOne({ where: { id } });
+      const post = await postDb.findOneById(id);
       if (!post) {
         return res.status(400).json("Tarefa não encontrada!");
       }
@@ -30,7 +30,7 @@ module.exports = {
     try {
       const { title, ...rest } = req.body;
 
-      const postExists = await Post.findOne({ where: { title } });
+      const postExists = await postDb.findOneByTitle(title);
 
       if (postExists) {
         return res.status(400).json({
@@ -39,7 +39,7 @@ module.exports = {
         });
       }
 
-      const createdPost = await Post.create({
+      const createdPost = await postDb.create({
         title,
         ...rest,
         image: req.file ? req.file.filename : null,
@@ -63,7 +63,7 @@ module.exports = {
   async update(req, res) {
     try {
       const id = Number(req.params.id);
-      const user = await User.findByPk(req.userId);
+      const user = await userDb.findOneById(req.userId);
       if (!user) {
         return res.status(404).json({ msg: "Usuário não encontrado!" });
       }
@@ -72,18 +72,19 @@ module.exports = {
         return res.status(403).json({ msg: "Usuário não autorizado!" });
       }
 
-      const post = await Post.findByPk(id);
+      const post = await postDb.findOneById(id);
       if (!post) {
         return res.status(404).json({ msg: "Postagem não encontrada!" });
       }
 
       const { title, subtitle, text } = req.body;
 
-      await post.update({
-        title,
-        subtitle,
-        text,
-      });
+      const updateData = {};
+      if (title !== undefined) updateData.title = title;
+      if (subtitle !== undefined) updateData.subtitle = subtitle;
+      if (text !== undefined) updateData.text = text;
+
+      await postDb.update(id, updateData);
 
       if (req.file) {
         if (post.image) {
@@ -95,7 +96,7 @@ module.exports = {
           await fs.promises.unlink(imagePath).catch(() => {});
         }
 
-        await post.update({
+        await postDb.update(id, {
           image: req.file.filename,
         });
       }
@@ -113,17 +114,18 @@ module.exports = {
   async delete(req, res) {
     try {
       const id = req.params.id;
-      const post = await Post.findOne({ where: { id } });
+      const post = await postDb.findOneById(id);
 
       if (!post) {
         return res.status(400).json("Postagem não encontrada!");
       }
 
-      const imagePath = path.join(__dirname, "../images/posts/", post.image);
-      await fs.promises.unlink(imagePath);
+      if (post.image) {
+        const imagePath = path.join(__dirname, "../images/posts/", post.image);
+        await fs.promises.unlink(imagePath).catch(() => {});
+      }
 
-      await post.destroy();
-      await post.save();
+      await postDb.delete(id);
 
       return res.status(201).json({
         erro: false,

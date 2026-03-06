@@ -1,10 +1,10 @@
-const Geduc = require("../models/geduc");
-const User = require("../models/user");
+const geducDb = require("../db/geduc-db");
+const userDb = require("../db/user-db");
 
 module.exports = {
   async one(req, res) {
     try {
-      const geduc = await Geduc.findOne({ where: { id: 1 } });
+      const geduc = await geducDb.findOneById(1);
       if (!geduc) {
         return res.status(400).json({ msg: "nada ainda" });
       }
@@ -16,13 +16,13 @@ module.exports = {
   },
 
   async create(req, res) {
-    const geduc = await Geduc.findOne({ where: { id: 1 } });
+    const geduc = await geducDb.findOneById(1);
     if (geduc) {
       return res.status(400).json({ msg: "Já existem dados" });
     }
 
     try {
-      await Geduc.create({
+      await geducDb.create({
         phone: "99984538839",
         instagram: "https://www.instagram.com/geduc.educacao",
         linkedin: "https://www.linkedin.com/company/geduc-solu%C3%A7%C3%B5es/",
@@ -52,7 +52,7 @@ module.exports = {
 
   async update(req, res) {
     try {
-      const user = await User.findByPk(req.userId);
+      const user = await userDb.findOneById(req.userId);
       if (!user) {
         return res.status(404).json({ msg: "Usuário não encontrado!" });
       }
@@ -61,7 +61,7 @@ module.exports = {
         return res.status(403).json({ msg: "Usuário não autorizado!" });
       }
 
-      const geduc = await Geduc.findByPk(1);
+      const geduc = await geducDb.findOneById(1);
       if (!geduc) {
         return res
           .status(404)
@@ -80,7 +80,7 @@ module.exports = {
         contact,
       } = req.body;
 
-      await geduc.update({
+      await geducDb.update(1, {
         phone,
         instagram,
         whatsapp,
