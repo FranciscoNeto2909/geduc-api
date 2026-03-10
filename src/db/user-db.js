@@ -4,7 +4,7 @@ module.exports = {
   // Buscar todos os usuários
   async findAll() {
     try {
-      const [rows] = await pool.execute("SELECT * FROM users");
+      const [rows] = await pool.execute("SELECT * FROM user");
       return rows;
     } catch (error) {
       throw error;
@@ -14,7 +14,9 @@ module.exports = {
   // Buscar usuário por ID
   async findOneById(id) {
     try {
-      const [rows] = await pool.execute("SELECT * FROM users WHERE id = ?", [id]);
+      const [rows] = await pool.execute("SELECT * FROM user WHERE id = ?", [
+        id,
+      ]);
       return rows[0] || null;
     } catch (error) {
       throw error;
@@ -24,7 +26,9 @@ module.exports = {
   // Buscar usuário por email
   async findOneByEmail(email) {
     try {
-      const [rows] = await pool.execute("SELECT * FROM users WHERE email = ?", [email]);
+      const [rows] = await pool.execute("SELECT * FROM user WHERE email = ?", [
+        email,
+      ]);
       return rows[0] || null;
     } catch (error) {
       throw error;
@@ -34,21 +38,13 @@ module.exports = {
   // Criar novo usuário
   async create(data) {
     try {
-      const {
-        name,
-        lastName,
-        image,
-        phone,
-        email,
-        password,
-        isLogged = false,
-        isAdmin = false,
-      } = data;
+      const { name, lastName, image, phone, email, password, rule, isLogged } =
+        data;
 
       const [result] = await pool.execute(
-        `INSERT INTO users (name, lastName, image, phone, email, password, isLogged, isAdmin) 
+        `INSERT INTO user (name, lastName, image, phone, email, password, rule, isLogged) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [name, lastName, image || null, phone, email, password, isLogged, isAdmin]
+        [name, lastName, image || null, phone, email, password, rule, isLogged],
       );
 
       return { id: result.insertId, ...data };
@@ -101,7 +97,7 @@ module.exports = {
       }
 
       values.push(id);
-      const query = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+      const query = `UPDATE user SET ${fields.join(", ")} WHERE id = ?`;
 
       const [result] = await pool.execute(query, values);
 
@@ -135,8 +131,8 @@ module.exports = {
       }
 
       const [result] = await pool.execute(
-        `UPDATE users SET ${field} = ? WHERE id = ?`,
-        [value, id]
+        `UPDATE user SET ${field} = ? WHERE id = ?`,
+        [value, id],
       );
 
       if (result.affectedRows === 0) {
@@ -152,7 +148,9 @@ module.exports = {
   // Deletar usuário
   async delete(id) {
     try {
-      const [result] = await pool.execute("DELETE FROM users WHERE id = ?", [id]);
+      const [result] = await pool.execute("DELETE FROM user WHERE id = ?", [
+        id,
+      ]);
       return result.affectedRows > 0;
     } catch (error) {
       throw error;

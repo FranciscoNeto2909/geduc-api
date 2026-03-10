@@ -68,7 +68,7 @@ module.exports = {
         return res.status(404).json({ msg: "Usuário não encontrado!" });
       }
 
-      if (!user.isAdmin) {
+      if (user.rule !== "Admin") {
         return res.status(403).json({ msg: "Usuário não autorizado!" });
       }
 
@@ -77,12 +77,13 @@ module.exports = {
         return res.status(404).json({ msg: "Postagem não encontrada!" });
       }
 
-      const { title, subtitle, text } = req.body;
+      const { title, subtitle, text, rule } = req.body;
 
       const updateData = {};
       if (title !== undefined) updateData.title = title;
       if (subtitle !== undefined) updateData.subtitle = subtitle;
       if (text !== undefined) updateData.text = text;
+      if (rule !== undefined) updateData.rule = rule;
 
       await postDb.update(id, updateData);
 

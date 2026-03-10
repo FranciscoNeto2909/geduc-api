@@ -62,7 +62,7 @@ module.exports = {
 
   async update(req, res) {
     try {
-      const { name, lastName, email, newPassword, image, phone } = req.body;
+      const { name, lastName, email, newPassword, image, phone, rule } = req.body;
       const id = req.params.id;
       const user = await userDb.findOneById(id);
 
@@ -76,6 +76,8 @@ module.exports = {
       if (image != "") updateData.image = image;
       if (email != "") updateData.email = email;
       if (phone != "") updateData.phone = phone;
+      if (rule != "") updateData.rule = rule;
+
 
       if (newPassword && (await compare(newPassword, user.password))) {
         return res.status(400).json({

@@ -34,12 +34,12 @@ module.exports = {
   // Criar novo post
   async create(data) {
     try {
-      const { image, title, subtitle, text } = data;
+      const { image, title, subtitle, text, rule } = data;
 
       const [result] = await pool.execute(
-        `INSERT INTO posts (image, title, subtitle, text) 
-         VALUES (?, ?, ?, ?)`,
-        [image || null, title, subtitle, text]
+        `INSERT INTO posts (image, title, subtitle, text, rule) 
+         VALUES (?, ?, ?, ? ,?)`,
+        [image || null, title, subtitle, text, rule]
       );
 
       return { id: result.insertId, ...data };

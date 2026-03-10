@@ -34,8 +34,6 @@ module.exports = {
         commercial: "comercial@genesistech.com.br",
       });
 
-      console.log("Criou");
-
       return res.status(201).json({
         erro: false,
         msg: "dados da empresa criados!",
@@ -57,7 +55,7 @@ module.exports = {
         return res.status(404).json({ msg: "Usuário não encontrado!" });
       }
 
-      if (!user.isAdmin) {
+      if (!user.rule === "Admin") {
         return res.status(403).json({ msg: "Usuário não autorizado!" });
       }
 
