@@ -1,7 +1,8 @@
 require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
-const sequelize = require("./configs/db");
+// Database connection is initialized in configs/db.js
+require("./configs/db");
 const userRoutes = require("./routes/users.routes");
 const postRoutes = require("./routes/post.routes");
 const geducRoutes = require("./routes/geduc.routes");
@@ -12,8 +13,6 @@ const http = require("http");
 const { Server } = require("socket.io");
 const socketConections = require("./configs/socket");
 const port = process.env.PORT;
-
-sequelize.sync().then(() => console.log("Database conected successfully..."));
 app.use(express.json());
 app.use(cors());
 app.use(
