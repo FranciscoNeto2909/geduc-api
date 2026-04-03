@@ -4,7 +4,9 @@ module.exports = {
   // Buscar todos os posts
   async findAll() {
     try {
-      const [rows] = await pool.execute("SELECT * FROM posts ORDER BY createdAt DESC");
+      const [rows] = await pool.execute(
+        "SELECT * FROM posts ORDER BY createdAt DESC",
+      );
       return rows;
     } catch (error) {
       throw error;
@@ -14,7 +16,9 @@ module.exports = {
   // Buscar post por ID
   async findOneById(id) {
     try {
-      const [rows] = await pool.execute("SELECT * FROM posts WHERE id = ?", [id]);
+      const [rows] = await pool.execute("SELECT * FROM posts WHERE id = ?", [
+        id,
+      ]);
       return rows[0] || null;
     } catch (error) {
       throw error;
@@ -24,7 +28,9 @@ module.exports = {
   // Buscar post por título
   async findOneByTitle(title) {
     try {
-      const [rows] = await pool.execute("SELECT * FROM posts WHERE title = ?", [title]);
+      const [rows] = await pool.execute("SELECT * FROM posts WHERE title = ?", [
+        title,
+      ]);
       return rows[0] || null;
     } catch (error) {
       throw error;
@@ -39,7 +45,7 @@ module.exports = {
       const [result] = await pool.execute(
         `INSERT INTO posts (image, title, subtitle, text, rule) 
          VALUES (?, ?, ?, ? ,?)`,
-        [image || null, title, subtitle, text, rule]
+        [image || null, title, subtitle, text, rule],
       );
 
       return { id: result.insertId, ...data };
@@ -71,6 +77,16 @@ module.exports = {
         values.push(data.text);
       }
 
+      if (data.rule !== undefined) {
+        fields.push("rule = ?");
+        values.push(data.rule);
+      }
+
+      if (data.isDeleted !== undefined) {
+        fields.push("isDeleted = ?");
+        values.push(data.isDeleted);
+      }
+
       if (fields.length === 0) {
         return null;
       }
@@ -93,7 +109,9 @@ module.exports = {
   // Deletar post
   async delete(id) {
     try {
-      const [result] = await pool.execute("DELETE FROM posts WHERE id = ?", [id]);
+      const [result] = await pool.execute("DELETE FROM posts WHERE id = ?", [
+        id,
+      ]);
       return result.affectedRows > 0;
     } catch (error) {
       throw error;

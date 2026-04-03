@@ -84,7 +84,10 @@ module.exports = {
       if (subtitle !== undefined) updateData.subtitle = subtitle;
       if (text !== undefined) updateData.text = text;
       if (rule !== undefined) updateData.rule = rule;
-      if (isDeleted !== undefined) updateData.isDeleted = isDeleted;
+      if (isDeleted !== undefined) {
+        updateData.isDeleted = isDeleted === "true" ? 1 : 0;
+      }
+
       await postDb.update(id, updateData);
 
       if (req.file) {
