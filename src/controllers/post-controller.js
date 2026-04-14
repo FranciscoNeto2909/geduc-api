@@ -60,6 +60,48 @@ module.exports = {
     }
   },
 
+  async createFromMaker(req, res) {
+    try {
+      const apiKey = req.headers['x-api-key'];
+  
+      if (!apiKey || apiKey !== process.env.API_KEY) {
+        return res.status(403).json({
+          erro: true,
+          msg: "Acesso negado: API Key inválida",
+        });
+      }
+  
+      const { title, ...rest } = req.body;
+  
+      const postExists = await postDb.findOneByTitle(title);
+  
+      if (postExists) {
+        return res.status(400).json({
+          erro: true,
+          msg: "Esse post já existe!",
+        });
+      }
+  
+      const createdPost = await postDb.create({
+        title,
+        ...rest,
+        image: req.file ? req.file.filename : null,
+      });
+  
+      return res.status(201).json({
+        erro: false,
+        msg: "Postagem adicionada ao blog!",
+        id: createdPost.id,
+      });
+  
+    } catch (error) {
+      return res.status(500).json({
+        erro: true,
+        msg: "Erro interno no servidor",
+      });
+    }
+  },
+
   async update(req, res) {
     try {
       const id = Number(req.params.id);
@@ -119,9 +161,15 @@ module.exports = {
     try {
       const id = req.params.id;
       const post = await postDb.findOneById(id);
+      const user = await userDb.findOneById(req.userId);
+
 
       if (!post) {
         return res.status(400).json("Postagem não encontrada!");
+      }
+
+      if (user.rule !== "Admin") {
+        return res.status(403).json({ msg: "Usuário não autorizado!" });
       }
 
       if (post.image) {
