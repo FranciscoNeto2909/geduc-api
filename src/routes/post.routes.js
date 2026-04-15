@@ -20,7 +20,7 @@ const upload = multer({ storage });
 router
   .route("/")
   .get(postController.all)
-  .post(upload.single("image"), postController.create);
+  .post(authMiddleware, upload.single("image"), postController.create);
 
 router
   .route("/maker")

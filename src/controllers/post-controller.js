@@ -18,7 +18,7 @@ module.exports = {
       const id = req.params.id;
       const post = await postDb.findOneById(id);
       if (!post) {
-        return res.status(400).json("Tarefa não encontrada!");
+        return res.status(404).json("Postagem não encontrada!");
       }
       res.status(200).json(post);
     } catch (error) {
@@ -31,10 +31,18 @@ module.exports = {
       const { title, ...rest } = req.body;
 
       const postExists = await postDb.findOneByTitle(title);
+      const user = await userDb.findOneById(req.userId);
+      if (!user) {
+        return res.status(404).json({ msg: "Usuário não encontrado!" });
+      }
+
+      if (user.rule !== "Admin") {
+        return res.status(403).json({ msg: "Usuário não autorizado!" });
+      }
 
       if (postExists) {
         return res.status(400).json({
-          erro: true,
+          error: true,
           msg: "Esse post já existe!",
         });
       }
@@ -46,16 +54,15 @@ module.exports = {
       });
 
       return res.status(201).json({
-        erro: false,
+        error: false,
         msg: "Postagem adicionada ao blog!",
         id: createdPost.id,
       });
     } catch (error) {
       console.log(error);
       return res.status(400).json({
-        erro: true,
+        error: true,
         msg: "Faltam dados ou erro interno",
-        detalhe: error.message,
       });
     }
   },
@@ -66,7 +73,7 @@ module.exports = {
   
       if (!apiKey || apiKey !== process.env.API_KEY) {
         return res.status(403).json({
-          erro: true,
+          error: true,
           msg: "Acesso negado: API Key inválida",
         });
       }
@@ -77,7 +84,7 @@ module.exports = {
   
       if (postExists) {
         return res.status(400).json({
-          erro: true,
+          error: true,
           msg: "Esse post já existe!",
         });
       }
@@ -88,15 +95,15 @@ module.exports = {
         image: req.file ? req.file.filename : null,
       });
   
-      return res.status(201).json({
-        erro: false,
+      return res.status(200).json({
+        error: false,
         msg: "Postagem adicionada ao blog!",
         id: createdPost.id,
       });
   
     } catch (error) {
       return res.status(500).json({
-        erro: true,
+        error: true,
         msg: "Erro interno no servidor",
       });
     }
@@ -127,10 +134,25 @@ module.exports = {
       if (text !== undefined) updateData.text = text;
       if (rule !== undefined) updateData.rule = rule;
       if (isDeleted !== undefined) {
-        updateData.isDeleted = isDeleted === "true" ? 1 : 0;
+        updateData.isDeleted =
+          isDeleted === true ||
+          isDeleted === "true" ||
+          isDeleted === 1 ||
+          isDeleted === "1"
+            ? 1
+            : 0;
       }
 
-      await postDb.update(id, updateData);
+      if (Object.keys(updateData).length === 0 && !req.file) {
+        return res.status(400).json({
+          error: true,
+          msg: "Nenhum dado foi enviado para atualizacao.",
+        });
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await postDb.update(id, updateData);
+      }
 
       if (req.file) {
         if (post.image) {
@@ -163,9 +185,11 @@ module.exports = {
       const post = await postDb.findOneById(id);
       const user = await userDb.findOneById(req.userId);
 
-
+      if (!user) {
+        return res.status(404).json({ msg: "Usuário não encontrado!" });
+      }
       if (!post) {
-        return res.status(400).json("Postagem não encontrada!");
+        return res.status(404).json("Postagem não encontrada!");
       }
 
       if (user.rule !== "Admin") {
@@ -179,13 +203,12 @@ module.exports = {
 
       await postDb.delete(id);
 
-      return res.status(201).json({
-        erro: false,
+      return res.status(200).json({
+        error: false,
         msg: "Postagem apagada!",
       });
     } catch (error) {
       res.status(400).send(error);
-      console.log(error);
     }
   },
 };
